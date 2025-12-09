@@ -1,13 +1,23 @@
 from fastapi import FastAPI
-from app.routers import draft
 
-app = FastAPI(
-    title="Dota Draft Engine",
-    version="0.1.0"
-)
+from .db import init_db, seed_heroes
+from .routers import draft, heroes
+
+app = FastAPI(title="Dota Draft Backend")
+
+
+@app.on_event("startup")
+def on_startup():
+    # Make sure DB is ready and has heroes
+    init_db()
+    seed_heroes()
+
 
 @app.get("/health")
-def health_check():
+def health():
     return {"status": "ok"}
 
-app.include_router(draft.router, prefix="/draft", tags=["draft"])
+
+# Routers
+app.include_router(heroes.router)
+app.include_router(draft.router)

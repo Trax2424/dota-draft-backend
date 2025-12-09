@@ -1,11 +1,12 @@
-import os
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings  # <- pydantic v2 style
 
 class Settings(BaseSettings):
-    # Placeholder DB URL for now – we’ll override this on Railway later
-    DATABASE_URL: str = "postgresql://user:password@localhost:5432/dota_draft"
+    # Default DB for local = SQLite file
+    DATABASE_URL: str = "sqlite:///./dev.db"
+    database_url: str = "sqlite:///./dev.db"
 
     class Config:
         env_file = ".env"
+        extra = "ignore"  # ignore any extra env vars so nothing explodes
 
 settings = Settings()
